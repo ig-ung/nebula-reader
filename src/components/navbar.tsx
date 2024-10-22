@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
-import { Input, Switch, Menu } from "@headlessui/react";
+import { Switch } from "@headlessui/react";
 import { FaSearch } from "react-icons/fa";
 import UserDropdown from "./user-dropdown";
+import { SearchInd } from "./search-ind";
+
 
 // links for each route
 const links = [
@@ -17,68 +19,60 @@ const links = [
 
 export default function NavbarTop() {
   const pathname = usePathname();
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
 
   return (
-    <>
-      <div className="flex border-black  mx-auto justify-around items-center shadow-xl">
-        <div className="flex my-2 items-center justify-center ">
-          <Link href={"/"}>
-            <img
-              src="https://placehold.co/100"
-              alt="logo"
-              className="size-14 rounded-full mr-2"
-            />
-          </Link>
-          {links.map((link) => {
-            return (
-              <div>
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={clsx(
-                    "flex text-red items-center justify-center mx-0.5 hover:text-amber-500 hover:font-semibold md:flex-none md:justify-start md:p-2 md:px-3",
-                    {
-                      "text-amber-500 font-semibold": pathname === link.href,
-                    }
-                  )}
-                >
-                  {/* <LinkIcon className="w-6" /> */}
-                  <p className="md:block">{link.name}</p>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex w-[50vh] justify-end items-end ">
-          <div className="relative">
-            <Input
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+    <div className="flex justify-around items-center mx-auto py-2 px-5 bg-white">
+      {/* Left Section - Logo and Links */}
+      <div className="flex items-center space-x-6">
+        <Link href="/" className="outline-amber-500 rounded-full">
+          <img
+            src="https://placehold.co/100"
+            alt="logo"
+            className="size-20 rounded-full"
+          />
+        </Link>
+        <div className="flex space-x-4">
+          {links.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
               className={clsx(
-                "m-2.5 block w-64 rounded-3xl border-2 p-2 text-sm text-black outline-slate-400",
-                "focus:outline-1 data-[focus]:outline-amber-500/50"
+                "text-xl hover:text-red-700",
+                {
+                  "text-red-700": pathname === link.href,
+                }
               )}
-              placeholder="Search..."
-            />
-            <button className="absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full p-2">
-              <FaSearch className={clsx(
-                "mx-auto transition-colors", searchText ? "text-amber-500" : "text-slate-400")} />
-            </button>
-          </div>
-          <Switch
-            checked={enabled}
-            onChange={setEnabled}
-            className="group border-2 inline-flex h-6 w-11 my-auto items-center rounded-full bg-amber-500 transition data-[checked]:bg-blue-600"
-          >
-            <span className="size-4 translate-x-0 rounded-full bg-white transition group-data-[checked]:translate-x-6" />
-          </Switch>
-          <div className="-mb-1 mx-6">
-            <UserDropdown />
-          </div>
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
       </div>
-    </>
+
+      {/* Right Section - Search, Switch, and User Dropdown */}
+      <div className="flex items-center space-x-4">
+        <SearchInd />
+
+        <Switch
+          checked={enabled}
+          onChange={setEnabled}
+          className={clsx(
+            "relative inline-flex h-6 w-11 items-center rounded-full transition",
+            enabled ? "bg-slate-500" : "bg-red-700"
+          )}
+        >
+          <span
+            className={clsx(
+              "inline-block h-4 w-4 transform rounded-full bg-white transition",
+              enabled ? "translate-x-6" : "translate-x-0"
+            )}
+          />
+        </Switch>
+
+        <UserDropdown />
+      </div>
+    </div>
   );
 }
